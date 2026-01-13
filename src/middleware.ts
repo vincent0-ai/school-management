@@ -19,7 +19,15 @@ export default clerkMiddleware(async (auth, req) => {
   const role = (sessionClaims?.publicMetadata as { role?: string })?.role;
 
   // Skip public routes
-  if (PUBLIC_PATHS.includes(req.nextUrl.pathname)) {
+  // Skip public routes
+  const isPublicPath = PUBLIC_PATHS.some((path) => {
+    if (path === "/") {
+      return req.nextUrl.pathname === "/";
+    }
+    return req.nextUrl.pathname.startsWith(path);
+  });
+
+  if (isPublicPath) {
     return;
   }
 

@@ -61,6 +61,9 @@ const LoginPage = () => {
           >
             Sign In
           </SignIn.Action>
+          <div className="text-sm mt-2 text-center">
+            Don't have an account? <a href="/sign-up" className="text-blue-500 underline">Sign up</a>
+          </div>
         </SignIn.Step>
       </SignIn.Root>
     </div>

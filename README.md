@@ -1,166 +1,95 @@
-````md
-# JKAUT School Management System
+# Lama Dev School Management Dashboard
 
-## Getting Started
+A comprehensive School Management System built with Next.js, Prisma, and PostgreSQL, using Clerk for authentication.
 
-First, run the development server:
+## 🚀 Getting Started
+
+### 1. Prerequisites
+- **Docker**: Ensure Docker Desktop is installed and running.
+- **Node.js**: v18 or higher recommended.
+- **Clerk Account**: You need a [Clerk](https://clerk.com/) account for authentication.
+
+### 2. Environment Setup
+
+Create a `.env` file in the root directory (already done if following the setup guide):
+
+```env
+DATABASE_URL="postgresql://myuser:mypassword@localhost:5432/mydb?schema=public"
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
+CLERK_SECRET_KEY=sk_test_...
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/
+```
+
+### 3. Start Database
+Run the following command to start PostgreSQL via Docker:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-````
+docker-compose up -d postgres
+```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 4. Run the Application
+To avoid port conflicts (common with Next.js caching issues), use port **3002**:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+PORT=3002 npm run dev
+```
 
----
-
-## Project Overview
-
-The **JKAUT School Management System** is a modern, minimalistic web-based platform designed to manage and streamline academic and administrative activities within a school environment. The system focuses on clarity, real-world relationships, and role-based access while remaining intentionally simple for learning and presentation purposes.
+Open [http://localhost:3002](http://localhost:3002) in your browser.
 
 ---
 
-## Purpose of the System
+## 🔐 Authentication & Roles (Important!)
 
-This system provides a centralized platform where:
+This application uses **Clerk** for authentication and **PostgreSQL** for data.
 
-* Admins manage the overall school structure
-* Teachers manage subjects, classes, homework, and announcements
-* Students access their academic information
-* Parents monitor their children’s academic progress and attendance
+### Default Logins?
+**There are NO default passwords.**
+Since Clerk manages auth, you must **Sign Up** to create your own account.
+1. Go to [http://localhost:3002/sign-up](http://localhost:3002/sign-up)
+2. Create a new account (Username, Email, Password).
 
-The platform mirrors real school workflows while maintaining a clean and minimal implementation.
+### How to View Admin/Teacher/Student Dashboards?
+By default, a new user has **no role** and may be redirected to Sign In or see an empty screen. To verify different dashboards, you must manually assign a role to your user in the **Clerk Dashboard**:
 
----
+1. Go to your [Clerk Dashboard](https://dashboard.clerk.com/) > **Users**.
+2. Select your newly created user.
+3. Scroll to **Metadata** > **Public Metadata**.
+4. Add the `role` property:
+   
+   **For Admin View:**
+   ```json
+   {
+     "role": "admin"
+   }
+   ```
+   **For Teacher View:**
+   ```json
+   {
+     "role": "teacher"
+   }
+   ```
+   *(Other roles: `student`, `parent`)*
 
-## User Roles and Responsibilities
-
-### Admins
-
-Admins have full control over the system and can:
-
-* Manage users (students, teachers, parents)
-* Create and manage classes and subjects
-* Assign teachers to subjects
-* Enroll students into classes and subjects
-* Oversee the overall school structure
-
----
-
-### Teachers
-
-Teachers are responsible for academic content and classroom management. They can:
-
-* Teach multiple subjects
-* Manage subjects they are assigned to
-* Post homework and assignments
-* Publish announcements
-* Record and update student grades
-* Track attendance for their classes
+5. Refresh your local app. You should now be redirected to the respective dashboard (e.g., `/admin`).
 
 ---
 
-### Students
+## 📂 Database Seed Data
 
-Students have access to their academic information and can:
+The database is pre-populated with sample data (but NOT Clerk users). You can verify the UI displays this data once logged in with the correct role.
 
-* Enroll in multiple subjects
-* View grades per subject
-* Access homework and assignments
-* Read announcements
-* View attendance records
-* See registered classes and subjects
+- **Admins**: `admin1`, `admin2`
+- **Teachers**: `TName1 TSurname1` ...
+- **Students**: `SName1 SSurname1` ...
+- **Parents**: `PName 1 PSurname 1` ...
+- **Classes**: 1A to 6A
+- **Lessons, Exams, Assignments, Results**: Pre-generated sample entries.
 
----
-
-### Parents
-
-Parents act as supervisors of student progress. The system supports:
-
-* Parents having multiple children enrolled
-* Viewing each child’s:
-
-  * Grades
-  * Subjects and classes
-  * Homework and announcements
-  * Attendance records
-
-Parents have read-only access to their children’s academic data.
-
----
-
-## Core System Relationships
-
-* A parent can have many students (children)
-* A teacher can teach many subjects
-* A student can enroll in many subjects
-* A subject can have many students
-* Grades, attendance, and homework are linked to students and subjects
-
-These relationships are managed using **PostgreSQL** and **Prisma ORM** to ensure data integrity and clarity.
-
----
-
-## Technology Stack
-
-### Frontend
-
-* Next.js (App Router)
-* TypeScript
-* Minimalistic UI focused on usability and clarity
-
-### Backend & Database
-
-* Prisma ORM for schema definition and relations
-* PostgreSQL for robust relational data management
-* API routes and server actions handled within Next.js
-
----
-
-## Authentication & Authorization (Current Status)
-
-Authentication and authorization are currently **bypassed** for development and presentation purposes.
-
-* Login routes are placed under `PUBLIC_URL`
-* This allows unrestricted access during development
-* The team is actively learning and implementing AuthN and AuthZ using **Clerk**
-* Authentication is not yet production-ready
-
-This approach allows focus on core system logic and data relationships without unstable auth implementations.
-
----
-
-## Design Philosophy
-
-The system follows a minimalistic, learning-first approach:
-
-* Clear role separation
-* Strong relational data modeling
-* Maintainable and readable code
-* Scalable architecture for future enhancements
-* Practical functionality over feature overload
-
----
-
-## Development Status
-
-* Core entities and relationships implemented
-* Role-based behavior defined
-* Authentication temporarily bypassed
-* Optimized for presentation and learning
-* Designed for future expansion
-
----
-
-## Conclusion
-
-The **JKAUT School Management System** demonstrates how modern web technologies can be used to build a structured, role-based application that reflects real-world school operations. While minimal by design, the system provides a strong foundation for future development and production readiness.
-
+If you need to reset the data:
+```bash
+npx prisma db push
+npm run seed
 ```
