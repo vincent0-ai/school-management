@@ -3,6 +3,21 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const client_1 = require("@prisma/client");
 const prisma = new client_1.PrismaClient();
 async function main() {
+    // CLEANUP
+    await prisma.announcement.deleteMany();
+    await prisma.event.deleteMany();
+    await prisma.attendance.deleteMany();
+    await prisma.result.deleteMany();
+    await prisma.assignment.deleteMany();
+    await prisma.exam.deleteMany();
+    await prisma.student.deleteMany();
+    await prisma.lesson.deleteMany();
+    await prisma.class.deleteMany();
+    await prisma.teacher.deleteMany();
+    await prisma.parent.deleteMany();
+    await prisma.subject.deleteMany();
+    await prisma.grade.deleteMany();
+    await prisma.admin.deleteMany();
     // ADMIN
     await prisma.admin.create({
         data: {
@@ -20,6 +35,7 @@ async function main() {
     for (let i = 1; i <= 6; i++) {
         await prisma.grade.create({
             data: {
+                id: i,
                 level: i,
             },
         });
@@ -28,6 +44,7 @@ async function main() {
     for (let i = 1; i <= 6; i++) {
         await prisma.class.create({
             data: {
+                id: i,
                 name: `${i}A`,
                 gradeId: i,
                 capacity: Math.floor(Math.random() * (20 - 15 + 1)) + 15,
@@ -47,8 +64,13 @@ async function main() {
         { name: "Computer Science" },
         { name: "Art" },
     ];
-    for (const subject of subjectData) {
-        await prisma.subject.create({ data: subject });
+    for (let i = 0; i < subjectData.length; i++) {
+        await prisma.subject.create({
+            data: {
+                id: i + 1,
+                ...subjectData[i],
+            },
+        });
     }
     // TEACHER
     for (let i = 1; i <= 15; i++) {
@@ -73,6 +95,7 @@ async function main() {
     for (let i = 1; i <= 30; i++) {
         await prisma.lesson.create({
             data: {
+                id: i,
                 name: `Lesson${i}`,
                 day: client_1.Day[Object.keys(client_1.Day)[Math.floor(Math.random() * Object.keys(client_1.Day).length)]],
                 startTime: new Date(new Date().setHours(new Date().getHours() + 1)),
@@ -121,6 +144,7 @@ async function main() {
     for (let i = 1; i <= 10; i++) {
         await prisma.exam.create({
             data: {
+                id: i,
                 title: `Exam ${i}`,
                 startTime: new Date(new Date().setHours(new Date().getHours() + 1)),
                 endTime: new Date(new Date().setHours(new Date().getHours() + 2)),
@@ -132,6 +156,7 @@ async function main() {
     for (let i = 1; i <= 10; i++) {
         await prisma.assignment.create({
             data: {
+                id: i,
                 title: `Assignment ${i}`,
                 startDate: new Date(new Date().setHours(new Date().getHours() + 1)),
                 dueDate: new Date(new Date().setDate(new Date().getDate() + 1)),

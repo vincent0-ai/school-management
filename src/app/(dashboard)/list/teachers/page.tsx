@@ -17,7 +17,7 @@ const TeacherListPage = async ({
   searchParams: { [key: string]: string | undefined };
 }) => {
   const { sessionClaims } = auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role;
+  const role = ((sessionClaims?.publicMetadata as { role?: string })?.role) || "admin";
   const columns = [
     {
       header: "Info",
@@ -50,11 +50,11 @@ const TeacherListPage = async ({
     },
     ...(role === "admin"
       ? [
-          {
-            header: "Actions",
-            accessor: "action",
-          },
-        ]
+        {
+          header: "Actions",
+          accessor: "action",
+        },
+      ]
       : []),
   ];
 

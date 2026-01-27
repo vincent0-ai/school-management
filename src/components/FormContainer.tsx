@@ -4,19 +4,20 @@ import { auth } from "@clerk/nextjs/server";
 
 export type FormContainerProps = {
   table:
-    | "teacher"
-    | "student"
-    | "parent"
-    | "subject"
-    | "class"
-    | "lesson"
-    | "exam"
-    | "assignment"
-    | "result"
-    | "attendance"
-    | "event"
-    | "announcement";
-  type: "create" | "update" | "delete";
+  | "teacher"
+  | "student"
+  | "parent"
+  | "subject"
+  | "class"
+  | "lesson"
+  | "exam"
+  | "assignment"
+  | "result"
+  | "attendance"
+  | "event"
+  | "announcement"
+  | "approval";
+  type: "create" | "update" | "delete" | "approve";
   data?: any;
   id?: number | string;
 };
@@ -68,6 +69,26 @@ const FormContainer = async ({ table, type, data, id }: FormContainerProps) => {
           select: { id: true, name: true },
         });
         relatedData = { lessons: examLessons };
+        break;
+      case "approval":
+        const approvalGrades = await prisma.grade.findMany({
+          select: { id: true, level: true },
+        });
+        const approvalClasses = await prisma.class.findMany({
+          include: { _count: { select: { students: true } } },
+        });
+        const approvalSubjects = await prisma.subject.findMany({
+          select: { id: true, name: true },
+        });
+        const approvalParents = await prisma.parent.findMany({
+          select: { id: true, name: true, surname: true },
+        });
+        relatedData = {
+          grades: approvalGrades,
+          classes: approvalClasses,
+          subjects: approvalSubjects,
+          parents: approvalParents,
+        };
         break;
 
       default:

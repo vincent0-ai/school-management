@@ -90,6 +90,12 @@ const menuItems = [
         href: "/list/announcements",
         visible: ["admin", "teacher", "student", "parent"],
       },
+      {
+        icon: "/assignment.png",
+        label: "Approvals",
+        href: "/list/approvals",
+        visible: ["admin"],
+      },
     ],
   },
   {
@@ -119,7 +125,7 @@ const menuItems = [
 
 const Menu = async () => {
   const user = await currentUser();
-  const role = user?.publicMetadata.role as string;
+  const role = (user?.publicMetadata.role as string);
   return (
     <div className="mt-4 text-sm">
       {menuItems.map((i) => (

@@ -15,8 +15,13 @@ const LoginPage = () => {
   useEffect(() => {
     if (isLoaded && isSignedIn) {
       const role = user?.publicMetadata.role as string;
-      // Redirect to role-specific page, or admin dashboard if no role
-      router.push(`/${role || 'admin'}`);
+      const approved = user?.publicMetadata.approved as boolean;
+
+      if (role === 'admin' || approved) {
+        router.push(`/${role || 'admin'}`);
+      } else {
+        router.push('/pending');
+      }
     }
   }, [isLoaded, isSignedIn, user, router]);
 

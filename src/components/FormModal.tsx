@@ -3,6 +3,7 @@
 import {
   deleteClass,
   deleteExam,
+  deleteParent,
   deleteStudent,
   deleteSubject,
   deleteTeacher,
@@ -21,8 +22,8 @@ const deleteActionMap = {
   teacher: deleteTeacher,
   student: deleteStudent,
   exam: deleteExam,
-// TODO: OTHER DELETE ACTIONS
-  parent: deleteSubject,
+  // TODO: OTHER DELETE ACTIONS
+  parent: deleteParent,
   lesson: deleteSubject,
   assignment: deleteSubject,
   result: deleteSubject,
@@ -49,6 +50,12 @@ const ClassForm = dynamic(() => import("./forms/ClassForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 const ExamForm = dynamic(() => import("./forms/ExamForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const ParentForm = dynamic(() => import("./forms/ParentForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const ApprovalForm = dynamic(() => import("./forms/ApprovalForm"), {
   loading: () => <h1>Loading...</h1>,
 });
 // TODO: OTHER FORMS
@@ -102,6 +109,17 @@ const forms: {
     />
     // TODO OTHER LIST ITEMS
   ),
+  parent: (setOpen, type, data, relatedData) => (
+    <ParentForm
+      type={type}
+      data={data}
+      setOpen={setOpen}
+      relatedData={relatedData}
+    />
+  ),
+  approval: (setOpen, type, data, relatedData) => (
+    <ApprovalForm setOpen={setOpen} data={data} relatedData={relatedData} />
+  ),
 };
 
 const FormModal = ({
@@ -116,8 +134,10 @@ const FormModal = ({
     type === "create"
       ? "bg-lamaYellow"
       : type === "update"
-      ? "bg-lamaSky"
-      : "bg-lamaPurple";
+        ? "bg-lamaSky"
+        : type === "approve"
+          ? "bg-lamaYellow"
+          : "bg-lamaPurple";
 
   const [open, setOpen] = useState(false);
 
@@ -147,7 +167,7 @@ const FormModal = ({
           Delete
         </button>
       </form>
-    ) : type === "create" || type === "update" ? (
+    ) : type === "create" || type === "update" || type === "approve" ? (
       forms[table](setOpen, type, data, relatedData)
     ) : (
       "Form not found!"

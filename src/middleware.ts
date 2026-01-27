@@ -11,14 +11,17 @@ const matchers = Object.keys(routeAccessMap).map((route) => ({
 console.log("Route matchers:", matchers);
 
 // Public routes that should never trigger redirects
-const PUBLIC_PATHS = ["/sign-in", "/sign-up", "/forgot-password", "/"];
+const PUBLIC_PATHS = ["/sign-in", "/sign-up", "/forgot-password", "/", "/pending"];
 
 // Middleware
 export default clerkMiddleware(async (auth, req) => {
-  const { sessionClaims } = await auth(); // <-- await here
-  const role = (sessionClaims?.publicMetadata as { role?: string })?.role;
+  const { sessionClaims } = await auth();
+  const publicMetadata = sessionClaims?.publicMetadata as { role?: string; approved?: boolean };
 
-  // Skip public routes
+  // Robust role detection
+  let role = publicMetadata?.role;
+  const approved = publicMetadata?.approved;
+
   // Skip public routes
   const isPublicPath = PUBLIC_PATHS.some((path) => {
     if (path === "/") {
@@ -37,6 +40,12 @@ export default clerkMiddleware(async (auth, req) => {
       if (!role || !allowedRoles.includes(role)) {
         const redirectTo = role ? `/${role}` : "/sign-in";
         return NextResponse.redirect(new URL(redirectTo, req.url));
+      }
+
+      // If registered user but not approved yet, redirect to /pending
+      // Admins are exempt
+      if (role !== "admin" && !approved) {
+        return NextResponse.redirect(new URL("/pending", req.url));
       }
     }
   }

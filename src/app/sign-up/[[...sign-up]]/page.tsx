@@ -16,7 +16,13 @@ const SignUpPage = () => {
     useEffect(() => {
         if (isLoaded && isSignedIn) {
             const role = user?.publicMetadata.role as string;
-            router.push(`/${role || 'admin'}`);
+            const approved = user?.publicMetadata.approved as boolean;
+
+            if (role === 'admin' || approved) {
+                router.push(`/${role || 'admin'}`);
+            } else {
+                router.push('/pending');
+            }
         }
     }, [isLoaded, isSignedIn, user, router]);
 
@@ -76,6 +82,22 @@ const SignUpPage = () => {
                             required
                             className="p-2 rounded-md ring-1 ring-gray-300"
                         />
+                        <Clerk.FieldError className="text-xs text-red-400" />
+                    </Clerk.Field>
+
+                    <Clerk.Field name="unsafeMetadata.role" className="flex flex-col gap-2">
+                        <Clerk.Label className="text-xs text-gray-500">
+                            I am a...
+                        </Clerk.Label>
+                        <select
+                            name="unsafeMetadata.role"
+                            required
+                            className="p-2 rounded-md ring-1 ring-gray-300 text-sm"
+                        >
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                            <option value="parent">Parent</option>
+                        </select>
                         <Clerk.FieldError className="text-xs text-red-400" />
                     </Clerk.Field>
 
