@@ -1,22 +1,36 @@
-import { clerkClient } from "@clerk/nextjs/server";
+import { auth, clerkClient, currentUser } from "@clerk/nextjs/server";
 import Table from "@/components/Table";
 import TableSearch from "@/components/TableSearch";
 import Image from "next/image";
 import FormContainer from "@/components/FormContainer";
+import { redirect } from "next/navigation";
 
 const ApprovalsListPage = async ({
     searchParams,
 }: {
     searchParams: { [key: string]: string | undefined };
 }) => {
-    const usersResponse = await (await clerkClient()).users.getUserList();
+    const user = await currentUser();
+    const role = (user?.publicMetadata?.role as string);
+    if (role !== "admin") {
+        redirect("/");
+    }
+
+    const usersResponse = await (await clerkClient()).users.getUserList({
+        limit: 100,
+    });
 
     // Filter for users who signed up but aren't approved yet
-    // They should have a role in unsafeMetadata but NOT approved in publicMetadata
     const pendingUsers = usersResponse.data.filter((u) => {
-        const pubMeta = u.publicMetadata as { approved?: boolean };
+        const pubMeta = u.publicMetadata as { approved?: boolean; role?: string };
         const unsMeta = u.unsafeMetadata as { role?: string };
-        return !pubMeta.approved && unsMeta.role;
+
+        const isApproved = pubMeta.approved === true;
+        const role = unsMeta.role || pubMeta.role;
+        const isAdmin = role === 'admin';
+
+        // Show users who are not approved and aren't existing admins
+        return !isApproved && !isAdmin;
     });
 
     const columns = [
@@ -45,7 +59,7 @@ const ApprovalsListPage = async ({
         >
             <td className="p-4">{item.username || "N/A"}</td>
             <td className="p-4">{item.emailAddresses[0]?.emailAddress}</td>
-            <td className="p-4 capitalize">{item.unsafeMetadata.role}</td>
+            <td className="p-4 capitalize">{item.unsafeMetadata.role || item.publicMetadata.role || "N/A"}</td>
             <td className="p-4">
                 <div className="flex items-center gap-2">
                     <FormContainer
@@ -55,7 +69,7 @@ const ApprovalsListPage = async ({
                             id: item.id,
                             username: item.username,
                             email: item.emailAddresses[0]?.emailAddress,
-                            role: item.unsafeMetadata.role
+                            role: item.unsafeMetadata.role || item.publicMetadata.role
                         }}
                     />
                 </div>

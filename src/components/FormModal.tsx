@@ -58,7 +58,21 @@ const ParentForm = dynamic(() => import("./forms/ParentForm"), {
 const ApprovalForm = dynamic(() => import("./forms/ApprovalForm"), {
   loading: () => <h1>Loading...</h1>,
 });
-// TODO: OTHER FORMS
+const AnnouncementForm = dynamic(() => import("./forms/AnnouncementForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const LessonForm = dynamic(() => import("./forms/LessonForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const ResultForm = dynamic(() => import("./forms/ResultForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const EventForm = dynamic(() => import("./forms/EventForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
+const AssignmentForm = dynamic(() => import("./forms/AssignmentForm"), {
+  loading: () => <h1>Loading...</h1>,
+});
 
 const forms: {
   [key: string]: (
@@ -107,7 +121,6 @@ const forms: {
       setOpen={setOpen}
       relatedData={relatedData}
     />
-    // TODO OTHER LIST ITEMS
   ),
   parent: (setOpen, type, data, relatedData) => (
     <ParentForm
@@ -119,6 +132,21 @@ const forms: {
   ),
   approval: (setOpen, type, data, relatedData) => (
     <ApprovalForm setOpen={setOpen} data={data} relatedData={relatedData} />
+  ),
+  announcement: (setOpen, type, data, relatedData) => (
+    <AnnouncementForm setOpen={setOpen} data={data} relatedData={relatedData} type={type} />
+  ),
+  lesson: (setOpen, type, data, relatedData) => (
+    <LessonForm setOpen={setOpen} data={data} relatedData={relatedData} type={type} />
+  ),
+  result: (setOpen, type, data, relatedData) => (
+    <ResultForm setOpen={setOpen} data={data} relatedData={relatedData} type={type} />
+  ),
+  event: (setOpen, type, data, relatedData) => (
+    <EventForm setOpen={setOpen} data={data} relatedData={relatedData} type={type} />
+  ),
+  assignment: (setOpen, type, data, relatedData) => (
+    <AssignmentForm setOpen={setOpen} data={data} relatedData={relatedData} type={type} />
   ),
 };
 

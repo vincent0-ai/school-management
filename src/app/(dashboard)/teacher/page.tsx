@@ -1,9 +1,20 @@
 import Announcements from "@/components/Announcements";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
+import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
-const TeacherPage = () => {
-  const { userId } = auth();
+const TeacherPage = async () => {
+  const { userId } = await auth();
+
+  const teacher = await prisma.teacher.findUnique({
+    where: { id: userId! },
+  });
+
+  if (!teacher) {
+    redirect("/complete-profile");
+  }
+
   return (
     <div className="flex-1 p-4 flex gap-4 flex-col xl:flex-row">
       {/* LEFT */}

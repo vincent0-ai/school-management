@@ -5,13 +5,14 @@ import * as SignUp from "@clerk/elements/sign-up";
 import { useUser } from "@clerk/nextjs";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 
 const SignUpPage = () => {
     const { isLoaded, isSignedIn, user } = useUser();
 
     const router = useRouter();
+    const [showPassword, setShowPassword] = useState(false);
 
     useEffect(() => {
         if (isLoaded && isSignedIn) {
@@ -77,11 +78,26 @@ const SignUpPage = () => {
                         <Clerk.Label className="text-xs text-gray-500">
                             Password
                         </Clerk.Label>
-                        <Clerk.Input
-                            type="password"
-                            required
-                            className="p-2 rounded-md ring-1 ring-gray-300"
-                        />
+                        <div className="relative">
+                            <Clerk.Input
+                                type={showPassword ? "text" : "password"}
+                                required
+                                className="p-2 rounded-md ring-1 ring-gray-300 w-full pr-10"
+                            />
+                            <button
+                                type="button"
+                                className="absolute right-2 top-1/2 -translate-y-1/2 cursor-pointer"
+                                onClick={() => setShowPassword(!showPassword)}
+                            >
+                                <Image
+                                    src="/view.png"
+                                    alt=""
+                                    width={16}
+                                    height={16}
+                                    className={showPassword ? "" : "opacity-50"}
+                                />
+                            </button>
+                        </div>
                         <Clerk.FieldError className="text-xs text-red-400" />
                     </Clerk.Field>
 
@@ -89,15 +105,16 @@ const SignUpPage = () => {
                         <Clerk.Label className="text-xs text-gray-500">
                             I am a...
                         </Clerk.Label>
-                        <select
-                            name="unsafeMetadata.role"
-                            required
-                            className="p-2 rounded-md ring-1 ring-gray-300 text-sm"
-                        >
-                            <option value="student">Student</option>
-                            <option value="teacher">Teacher</option>
-                            <option value="parent">Parent</option>
-                        </select>
+                        <Clerk.Input asChild>
+                            <select
+                                required
+                                className="p-2 rounded-md ring-1 ring-gray-300 text-sm"
+                            >
+                                <option value="student">Student</option>
+                                <option value="teacher">Teacher</option>
+                                <option value="parent">Parent</option>
+                            </select>
+                        </Clerk.Input>
                         <Clerk.FieldError className="text-xs text-red-400" />
                     </Clerk.Field>
 

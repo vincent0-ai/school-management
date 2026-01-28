@@ -18,8 +18,9 @@ const StudentListPage = async ({
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-  const { sessionClaims } = auth();
-  const role = ((sessionClaims?.publicMetadata as { role?: string })?.role) || "admin";
+  const { userId, sessionClaims } = await auth();
+  const role = (sessionClaims?.metadata as { role?: string })?.role || "";
+  const currentUserId = userId;
 
   const columns = [
     {
@@ -118,13 +119,33 @@ const StudentListPage = async ({
             };
             break;
           case "search":
-            query.name = { contains: value, mode: "insensitive" };
+            query.name = { contains: value };
             break;
           default:
             break;
         }
       }
     }
+  }
+
+  // ROLE CONDITIONS
+  switch (role) {
+    case "admin":
+      break;
+    case "teacher":
+      query.class = {
+        lessons: {
+          some: {
+            teacherId: currentUserId!,
+          },
+        },
+      };
+      break;
+    case "parent":
+      query.parentId = currentUserId!;
+      break;
+    default:
+      break;
   }
 
   const [data, count] = await prisma.$transaction([

@@ -2,12 +2,21 @@ import Announcements from "@/components/Announcements";
 import BigCalendarContainer from "@/components/BigCalendarContainer";
 import prisma from "@/lib/prisma";
 import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 
 
 const ParentPage = async () => {
-  const { userId } = auth();
+  const { userId } = await auth();
   const currentUserId = userId;
-  
+
+  const parent = await prisma.parent.findUnique({
+    where: { id: currentUserId! },
+  });
+
+  if (!parent) {
+    redirect("/complete-profile");
+  }
+
   const students = await prisma.student.findMany({
     where: {
       parentId: currentUserId!,

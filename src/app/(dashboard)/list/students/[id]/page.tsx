@@ -16,19 +16,19 @@ const SingleStudentPage = async ({
 }: {
   params: { id: string };
 }) => {
-  const { sessionClaims } = auth();
+  const { sessionClaims } = await auth();
   const role = (sessionClaims?.metadata as { role?: string })?.role;
 
   const student:
     | (Student & {
-        class: Class & { _count: { lessons: number } };
-      })
+      class: Class & { _count: { lessons: number } };
+    })
     | null = await prisma.student.findUnique({
-    where: { id },
-    include: {
-      class: { include: { _count: { select: { lessons: true } } } },
-    },
-  });
+      where: { id },
+      include: {
+        class: { include: { _count: { select: { lessons: true } } } },
+      },
+    });
 
   if (!student) {
     return notFound();

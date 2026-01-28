@@ -1,4 +1,4 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware, createRouteMatcher, clerkClient } from "@clerk/nextjs/server";
 import { routeAccessMap } from "./lib/settings";
 import { NextResponse } from "next/server";
 
@@ -8,17 +8,27 @@ const matchers = Object.keys(routeAccessMap).map((route) => ({
   allowedRoles: routeAccessMap[route],
 }));
 
-console.log("Route matchers:", matchers);
-
 // Public routes that should never trigger redirects
 const PUBLIC_PATHS = ["/sign-in", "/sign-up", "/forgot-password", "/", "/pending", "/api/auto-approve"];
 
 // Middleware
 export default clerkMiddleware(async (auth, req) => {
-  const { userId, sessionClaims } = auth();
-  const publicMetadata = sessionClaims?.publicMetadata as { role?: string; approved?: boolean };
+  const { userId, sessionClaims } = await auth();
 
-  // Robust role detection
+  let publicMetadata = sessionClaims?.publicMetadata as { role?: string; approved?: boolean };
+
+  // If sessionClaims doesn't have metadata, fetch it from the user object (fallback)
+  if (userId && (!publicMetadata || !publicMetadata.role)) {
+    try {
+      const client = await clerkClient();
+      const user = await client.users.getUser(userId);
+      publicMetadata = user.publicMetadata as { role?: string; approved?: boolean };
+      console.log(`[Middleware] Metadata fallback fetch for ${userId}:`, publicMetadata);
+    } catch (err) {
+      console.error("[Middleware] Failed to fetch user metadata:", err);
+    }
+  }
+
   const role = publicMetadata?.role;
   const approved = publicMetadata?.approved;
 

@@ -13,7 +13,7 @@
   "dependencies": {
     "@clerk/backend": "^2.27.0",
     "@clerk/elements": "^0.23.89",
-    "@clerk/nextjs": "^6.35.5",
+    "@clerk/nextjs": "^6.36.10",
     "@hookform/resolvers": "^3.9.0",
     "@prisma/client": "^5.22.0",
     "@types/react-big-calendar": "^1.8.9",
