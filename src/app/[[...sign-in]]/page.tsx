@@ -2,7 +2,7 @@
 
 import * as Clerk from "@clerk/elements/common";
 import * as SignIn from "@clerk/elements/sign-in";
-import { useUser } from "@clerk/nextjs";
+import { useUser, SignOutButton } from "@clerk/nextjs";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
@@ -17,7 +17,10 @@ const LoginPage = () => {
       const role = user?.publicMetadata.role as string;
       const approved = user?.publicMetadata.approved as boolean;
 
+      console.log("LOGIN DEBUG: role:", role, "approved:", approved);
+
       if (role === 'admin' || approved) {
+        console.log("Redirecting to:", `/${role || 'admin'}`);
         router.push(`/${role || 'admin'}`);
       } else {
         router.push('/pending');
@@ -28,8 +31,15 @@ const LoginPage = () => {
   // Show loading while checking auth status
   if (!isLoaded || isSignedIn) {
     return (
-      <div className="h-screen flex items-center justify-center bg-lamaSkyLight">
-        <div className="text-gray-500">Loading...</div>
+      <div className="h-screen flex flex-col gap-4 items-center justify-center bg-lamaSkyLight">
+        <div className="text-gray-500">
+          Redirecting... ({user?.publicMetadata?.role as string || "checking"})
+        </div>
+        <SignOutButton>
+          <button className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600 transition-colors">
+            Sign Out / Try Again
+          </button>
+        </SignOutButton>
       </div>
     );
   }

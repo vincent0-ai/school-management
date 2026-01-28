@@ -14,13 +14,31 @@ const StudentPage = async () => {
     },
   });
 
-  console.log(classItem);
+  if (!classItem || classItem.length === 0) {
+    return (
+      <div className="p-4 flex gap-4 flex-col text-center items-center justify-center h-full">
+        <h1 className="text-xl font-bold">Welcome to JKUAT School</h1>
+        <p className="text-gray-500 my-4">Your account is approved, but you are not assigned to a class yet, or your profile is incomplete.</p>
+
+        {/* Placeholder for future profile completion form */}
+        <div className="bg-white p-8 rounded-md shadow-lg">
+          <h2 className="text-lg font-semibold mb-4">Complete Your Profile</h2>
+          <p className="text-sm text-gray-400">Please contact an administrator or wait for class assignment.</p>
+          {/* 
+                  TODO: Add form here:
+                  username, name, surname, phone, address, bloodType, sex, birthday, etc.
+                */}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="p-4 flex gap-4 flex-col xl:flex-row">
       {/* LEFT */}
       <div className="w-full xl:w-2/3">
         <div className="h-full bg-white p-4 rounded-md">
-          <h1 className="text-xl font-semibold">Schedule (4A)</h1>
+          <h1 className="text-xl font-semibold">Schedule ({classItem[0].name})</h1>
           <BigCalendarContainer type="classId" id={classItem[0].id} />
         </div>
       </div>

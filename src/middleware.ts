@@ -11,16 +11,29 @@ const matchers = Object.keys(routeAccessMap).map((route) => ({
 console.log("Route matchers:", matchers);
 
 // Public routes that should never trigger redirects
-const PUBLIC_PATHS = ["/sign-in", "/sign-up", "/forgot-password", "/", "/pending"];
+const PUBLIC_PATHS = ["/sign-in", "/sign-up", "/forgot-password", "/", "/pending", "/api/auto-approve"];
 
 // Middleware
 export default clerkMiddleware(async (auth, req) => {
-  const { sessionClaims } = await auth();
+  const { userId, sessionClaims } = auth();
   const publicMetadata = sessionClaims?.publicMetadata as { role?: string; approved?: boolean };
 
   // Robust role detection
-  let role = publicMetadata?.role;
+  const role = publicMetadata?.role;
   const approved = publicMetadata?.approved;
+
+  if (req.nextUrl.pathname.startsWith("/api/auto-approve")) {
+    console.log("[Middleware] API Request:", req.nextUrl.pathname);
+    console.log("[Middleware] UserId:", userId);
+  }
+
+  // Debug Log for Admin/Student routes
+  if (req.nextUrl.pathname.startsWith("/admin") || req.nextUrl.pathname.startsWith("/student")) {
+    console.log(`[Middleware Check] Path: ${req.nextUrl.pathname}`);
+    console.log(`[Middleware Check] UserId: ${userId}`);
+    console.log(`[Middleware Check] Role: ${role}`);
+    console.log(`[Middleware Check] Public Metadata:`, publicMetadata);
+  }
 
   // Skip public routes
   const isPublicPath = PUBLIC_PATHS.some((path) => {
@@ -38,6 +51,7 @@ export default clerkMiddleware(async (auth, req) => {
     if (matcher(req)) {
       // If user has no role or role is not allowed, redirect safely
       if (!role || !allowedRoles.includes(role)) {
+        console.log(`Middleware blocking access to ${req.nextUrl.pathname} for role ${role}. Allowed: ${allowedRoles}`);
         const redirectTo = role ? `/${role}` : "/sign-in";
         return NextResponse.redirect(new URL(redirectTo, req.url));
       }
