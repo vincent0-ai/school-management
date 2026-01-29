@@ -6,8 +6,7 @@ import prisma from "@/lib/prisma";
 import { ITEM_PER_PAGE } from "@/lib/settings";
 import { Prisma } from "@prisma/client";
 import Image from "next/image";
-
-import { auth, currentUser } from "@clerk/nextjs/server";
+import { getCurrentUserRole } from "@/lib/auth";
 
 type ResultList = {
   id: number;
@@ -28,10 +27,7 @@ const ResultListPage = async ({
   searchParams: { [key: string]: string | undefined };
 }) => {
 
-  const { userId, sessionClaims } = await auth();
-  const user = await currentUser();
-  const role = (user?.publicMetadata?.role as string);
-  const currentUserId = userId;
+  const { role, userId: currentUserId } = await getCurrentUserRole();
 
 
   const columns = [

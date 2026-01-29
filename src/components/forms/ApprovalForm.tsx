@@ -120,19 +120,14 @@ const ApprovalForm = ({
                                 </p>
                             )}
                         </div>
-                        <InputField
-                            label="Blood Type"
-                            name="bloodType"
-                            register={register}
-                            error={errors.bloodType}
-                        />
+
                     </>
                 )}
 
                 {role === "student" && (
                     <>
                         <div className="flex flex-col gap-2 w-full md:w-[48%]">
-                            <label className="text-xs text-gray-500">Grade</label>
+                            <label className="text-xs text-gray-500">Year of Study</label>
                             <select
                                 className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
                                 {...register("gradeId")}
@@ -150,7 +145,7 @@ const ApprovalForm = ({
                             )}
                         </div>
                         <div className="flex flex-col gap-2 w-full md:w-[48%]">
-                            <label className="text-xs text-gray-500">Class</label>
+                            <label className="text-xs text-gray-500">Course</label>
                             <select
                                 className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
                                 {...register("classId")}
@@ -187,7 +182,7 @@ const ApprovalForm = ({
 
                 {role === "teacher" && (
                     <div className="flex flex-col gap-2 w-full md:w-[48%]">
-                        <label className="text-xs text-gray-500">Subjects</label>
+                        <label className="text-xs text-gray-500">Units</label>
                         <select
                             multiple
                             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"

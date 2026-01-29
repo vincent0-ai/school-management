@@ -42,30 +42,38 @@ async function main() {
     });
   }
 
-  // CLASS
+  // CLASS (Now representing Courses)
+  const courseNames = [
+    "BSc Computer Science",
+    "BSc Information Technology",
+    "BSc Software Engineering",
+    "BSc Data Science",
+    "BSc Cybersecurity",
+    "BSc Artificial Intelligence"
+  ];
   for (let i = 1; i <= 6; i++) {
     await prisma.class.create({
       data: {
         id: i,
-        name: `${i}A`,
+        name: courseNames[i - 1],
         gradeId: i,
-        capacity: Math.floor(Math.random() * (20 - 15 + 1)) + 15,
+        capacity: Math.floor(Math.random() * (50 - 30 + 1)) + 30,
       },
     });
   }
 
-  // SUBJECT
+  // SUBJECT (Now representing Units/Modules)
   const subjectData = [
-    { name: "Mathematics" },
-    { name: "Science" },
-    { name: "English" },
-    { name: "History" },
-    { name: "Geography" },
-    { name: "Physics" },
-    { name: "Chemistry" },
-    { name: "Biology" },
-    { name: "Computer Science" },
-    { name: "Art" },
+    { name: "Introduction to Programming" },
+    { name: "Data Structures and Algorithms" },
+    { name: "Database Management Systems" },
+    { name: "Operating Systems" },
+    { name: "Computer Networks" },
+    { name: "Software Engineering" },
+    { name: "Web Development" },
+    { name: "Machine Learning" },
+    { name: "Discrete Mathematics" },
+    { name: "Object-Oriented Programming" },
   ];
 
   for (let i = 0; i < subjectData.length; i++) {
@@ -77,22 +85,39 @@ async function main() {
     });
   }
 
-  // TEACHER
+  // TEACHER (Now representing Lecturers)
+  const lecturerNames = [
+    { name: "Dr. James", surname: "Mwangi" },
+    { name: "Prof. Sarah", surname: "Ochieng" },
+    { name: "Dr. Michael", surname: "Kimani" },
+    { name: "Dr. Grace", surname: "Wanjiku" },
+    { name: "Prof. David", surname: "Otieno" },
+    { name: "Dr. Mary", surname: "Njeri" },
+    { name: "Dr. John", surname: "Kamau" },
+    { name: "Prof. Jane", surname: "Akinyi" },
+    { name: "Dr. Peter", surname: "Omondi" },
+    { name: "Dr. Elizabeth", surname: "Wambui" },
+    { name: "Prof. Robert", surname: "Kiprop" },
+    { name: "Dr. Anne", surname: "Chebet" },
+    { name: "Dr. Charles", surname: "Mutua" },
+    { name: "Prof. Lucy", surname: "Muthoni" },
+    { name: "Dr. Daniel", surname: "Korir" },
+  ];
   for (let i = 1; i <= 15; i++) {
     await prisma.teacher.create({
       data: {
-        id: `teacher${i}`, // Unique ID for the teacher
-        username: `teacher${i}`,
-        name: `TName${i}`,
-        surname: `TSurname${i}`,
-        email: `teacher${i}@example.com`,
-        phone: `123-456-789${i}`,
-        address: `Address${i}`,
-        bloodType: "A+",
+        id: `teacher${i}`,
+        username: `lecturer${i}`,
+        name: lecturerNames[i - 1].name,
+        surname: lecturerNames[i - 1].surname,
+        email: `lecturer${i}@university.ac.ke`,
+        phone: `+254-7${String(i).padStart(2, '0')}-123-456`,
+        address: `University Campus, Building ${i}`,
+        bloodType: "",
         sex: i % 2 === 0 ? "MALE" : "FEMALE",
         subjects: { connect: [{ id: (i % 10) + 1 }] },
         classes: { connect: [{ id: (i % 6) + 1 }] },
-        birthday: new Date(new Date().setFullYear(new Date().getFullYear() - 30)),
+        birthday: new Date(new Date().setFullYear(new Date().getFullYear() - 40)),
       },
     });
   }
@@ -113,38 +138,42 @@ async function main() {
     });
   }
 
-  // PARENT
+  // PARENT (Now representing Guardians/Emergency Contacts)
+  const guardianFirstNames = ["Joseph", "Mary", "Peter", "Elizabeth", "Samuel", "Catherine", "David", "Rose", "William", "Grace", "James", "Agnes", "Philip", "Joyce", "Daniel", "Margaret", "Stephen", "Florence", "George", "Alice", "Thomas", "Beatrice", "Charles", "Nancy", "Michael"];
+  const guardianLastNames = ["Odhiambo", "Wanjiru", "Kiplagat", "Nyambura", "Ochieng", "Mwende", "Mutiso", "Wairimu", "Karanja", "Cherop", "Odongo", "Wangari", "Kimani", "Adhiambo", "Korir", "Nyokabi", "Maina", "Chelimo", "Njoroge", "Wafula", "Nzomo", "Kemboi", "Gitonga", "Atieno", "Kiptoo"];
   for (let i = 1; i <= 25; i++) {
     await prisma.parent.create({
       data: {
         id: `parentId${i}`,
-        username: `parentId${i}`,
-        name: `PName ${i}`,
-        surname: `PSurname ${i}`,
-        email: `parent${i}@example.com`,
-        phone: `123-456-789${i}`,
-        address: `Address${i}`,
+        username: `guardian${i}`,
+        name: guardianFirstNames[i - 1],
+        surname: guardianLastNames[i - 1],
+        email: `${guardianFirstNames[i - 1].toLowerCase()}.${guardianLastNames[i - 1].toLowerCase()}@email.com`,
+        phone: `+254-7${String(i).padStart(2, '0')}-987-654`,
+        address: `Nairobi, Kenya`,
       },
     });
   }
 
-  // STUDENT
+  // STUDENT (University Students)
+  const studentFirstNames = ["John", "Jane", "Kevin", "Faith", "Brian", "Mercy", "Dennis", "Esther", "Patrick", "Sharon"];
+  const studentLastNames = ["Otieno", "Wanjiku", "Mwangi", "Achieng", "Kiprop", "Njeri", "Kamau", "Chebet", "Omondi", "Wambui"];
   for (let i = 1; i <= 50; i++) {
     await prisma.student.create({
       data: {
         id: `student${i}`,
         username: `student${i}`,
-        name: `SName${i}`,
-        surname: `SSurname ${i}`,
-        email: `student${i}@example.com`,
-        phone: `987-654-321${i}`,
-        address: `Address${i}`,
-        bloodType: "O-",
+        name: studentFirstNames[i % 10],
+        surname: studentLastNames[(i + 3) % 10],
+        email: `student${i}@students.university.ac.ke`,
+        phone: `+254-7${String(20 + i).padStart(2, '0')}-456-789`,
+        address: `Student Hostel, Room ${i}`,
+        bloodType: "",
         sex: i % 2 === 0 ? "MALE" : "FEMALE",
         parentId: `parentId${Math.ceil(i / 2) % 25 || 25}`,
         gradeId: (i % 6) + 1,
         classId: (i % 6) + 1,
-        birthday: new Date(new Date().setFullYear(new Date().getFullYear() - 10)),
+        birthday: new Date(new Date().setFullYear(new Date().getFullYear() - 22)),
       },
     });
   }

@@ -21,6 +21,34 @@ const CompleteProfileForm = ({
     relatedData?: any;
 }) => {
     const role = user?.publicMetadata?.role as string;
+
+    // Admin users don't need to complete a profile - they have admin table entry only
+    if (role === "admin") {
+        return (
+            <div className="flex flex-col gap-4 bg-white p-8 rounded-md shadow-md text-center">
+                <h1 className="text-xl font-semibold">Admin Account</h1>
+                <p className="text-gray-500">
+                    Admin accounts don&apos;t require profile completion. Your account is already set up.
+                </p>
+                <a href="/admin" className="bg-blue-500 text-white p-2 rounded-md hover:bg-blue-600">
+                    Go to Dashboard
+                </a>
+            </div>
+        );
+    }
+
+    // Only allow teacher, student, parent roles to complete profile
+    if (!["teacher", "student", "parent"].includes(role)) {
+        return (
+            <div className="flex flex-col gap-4 bg-white p-8 rounded-md shadow-md text-center">
+                <h1 className="text-xl font-semibold">Invalid Role</h1>
+                <p className="text-gray-500">
+                    Your account role is not configured correctly. Please contact an administrator.
+                </p>
+            </div>
+        );
+    }
+
     const resolver = role === "teacher" ? teacherSchema : role === "student" ? studentSchema : parentSchema;
 
     const {
@@ -124,24 +152,19 @@ const CompleteProfileForm = ({
                                 </p>
                             )}
                         </div>
-                        <InputField
-                            label="Blood Type"
-                            name="bloodType"
-                            register={register}
-                            error={errors.bloodType}
-                        />
+
                     </>
                 )}
 
                 {role === "student" && (
                     <>
                         <div className="flex flex-col gap-2 w-full md:w-[48%]">
-                            <label className="text-xs text-gray-500">Grade</label>
+                            <label className="text-xs text-gray-500">Year of Study</label>
                             <select
                                 className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
                                 {...register("gradeId")}
                             >
-                                <option value="">Select Grade</option>
+                                <option value="">Select Year</option>
                                 {relatedData?.grades?.map((grade: any) => (
                                     <option value={grade.id} key={grade.id}>
                                         {grade.level}
@@ -155,12 +178,12 @@ const CompleteProfileForm = ({
                             )}
                         </div>
                         <div className="flex flex-col gap-2 w-full md:w-[48%]">
-                            <label className="text-xs text-gray-500">Class</label>
+                            <label className="text-xs text-gray-500">Course</label>
                             <select
                                 className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"
                                 {...register("classId")}
                             >
-                                <option value="">Select Class</option>
+                                <option value="">Select Course</option>
                                 {relatedData?.classes?.map((classItem: any) => (
                                     <option value={classItem.id} key={classItem.id}>
                                         {classItem.name} ({classItem._count.students}/{classItem.capacity})
@@ -197,7 +220,7 @@ const CompleteProfileForm = ({
 
                 {role === "teacher" && (
                     <div className="flex flex-col gap-2 w-full md:w-[48%]">
-                        <label className="text-xs text-gray-500">Subjects</label>
+                        <label className="text-xs text-gray-500">Units</label>
                         <select
                             multiple
                             className="ring-[1.5px] ring-gray-300 p-2 rounded-md text-sm w-full"

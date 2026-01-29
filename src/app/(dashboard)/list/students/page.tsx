@@ -9,7 +9,7 @@ import { Class, Prisma, Student } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 
-import { auth } from "@clerk/nextjs/server";
+import { getCurrentUserRole } from "@/lib/auth";
 
 type StudentList = Student & { class: Class };
 
@@ -18,9 +18,7 @@ const StudentListPage = async ({
 }: {
   searchParams: { [key: string]: string | undefined };
 }) => {
-  const { userId, sessionClaims } = await auth();
-  const role = (sessionClaims?.metadata as { role?: string })?.role || "";
-  const currentUserId = userId;
+  const { role, userId: currentUserId } = await getCurrentUserRole();
 
   const columns = [
     {
